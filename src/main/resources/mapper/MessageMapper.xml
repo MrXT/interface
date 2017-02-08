@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.karakal.dao.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.karakal.entity.Message">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="message_id" jdbcType="INTEGER" property="messageId" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="rid" jdbcType="VARCHAR" property="rid" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="ctime" jdbcType="TIMESTAMP" property="ctime" />
+  </resultMap>
+  <update id="updateBatchStatus" parameterType="com.karakal.controller.common.MessageVo">
+  	update bs_message set status = 1 where user_id = #{userId}
+  </update>
+</mapper>

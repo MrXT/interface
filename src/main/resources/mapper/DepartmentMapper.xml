@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.karakal.dao.mapper.DepartmentMapper">
+  <resultMap id="BaseResultMap" type="com.karakal.entity.Department">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="department_id" jdbcType="VARCHAR" property="departmentId" />
+    <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+  </resultMap>
+  <select id="selectDepartmentByuserId" resultMap="BaseResultMap">
+  	select d.department_id,d.department_name from bs_department d
+  	inner join bs_department_station_user dsu on dsu.department_id =d.department_id
+  	where dsu.user_id = #{userId}
+  	limit 1 
+  </select>
+</mapper>

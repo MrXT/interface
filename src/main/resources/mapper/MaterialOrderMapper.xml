@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.MaterialOrderMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.MaterialOrder">
+		<!-- WARNING - @mbggenerated -->
+		<id column="material_order_id" property="materialOrderId" jdbcType="INTEGER" />
+		<result column="material_id" property="materialId" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="materialtype_id" property="materialtypeId" jdbcType="VARCHAR" />
+		<result column="apply_user_id" property="applyUserId" jdbcType="VARCHAR" />
+		<result column="handel_user_id" property="handelUserId" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="materialname_id" property="materialnameId" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="picurl" property="picurl" jdbcType="VARCHAR" />
+		<result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+		<result column="utime" property="ctime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<select id="queryByCondition" parameterType="com.karakal.controller.material.vo.MaterialVo" resultType="map">
+		SELECT
+		mo.material_order_id AS materialOrderId,
+		mo.material_id AS materialId,
+		mo.`status`,
+		<if test="type == 2">
+			mo.materialtype_id AS materialTypeName,
+			mo.materialname_id AS materialName,
+		</if>
+		<if test="type == 1">
+			mt.material_type_name AS materialTypeName,
+			mn.material_name AS materialName,
+		</if>
+		mo.apply_user_id AS
+		applyUserId,
+		mo.handel_user_id AS handleUserId,
+		mo.type,
+		mo.remark,
+		mo.picurl,
+		mo.utime,
+		u.`NAME` AS handleName
+		FROM
+		bs_material_order AS
+		mo
+		<if test="type == 1">
+			Left JOIN bs_materialtype AS mt ON mt.MATERIALTYPE_ID = mo.materialtype_id
+			Left JOIN bs_materialname AS mn ON mn.MATERIALNAME_ID =
+			mo.materialname_id
+		</if>
+		LEFT JOIN sys_user AS u ON u.USER_ID = mo.handel_user_id
+		where 1=1
+		<if test="userId != null and userId != ''">
+			and mo.apply_user_id = #{userId}
+		</if>
+		<if test="type != null">
+			and mo.type = #{type}
+		</if>
+	</select>
+</mapper>

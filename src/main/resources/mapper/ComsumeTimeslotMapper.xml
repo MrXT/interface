@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.ComsumeTimeslotMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.ComsumeTimeslot">
+		<!-- WARNING - @mbggenerated -->
+		<id column="comsume_timeslot_id" property="comsumeTimeslotId" jdbcType="VARCHAR" />
+		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+		<result column="first_money" property="firstMoney" jdbcType="DOUBLE" />
+		<result column="second_money" property="secondMoney" jdbcType="DOUBLE" />
+	</resultMap>
+	<select id="queryByContidion" parameterType="com.karakal.entity.ComsumeTimeslot" resultMap="BaseResultMap">
+		select * from bs_comsume_timeslot where DATE_FORMAT(start_date,'%H:%i') &lt;= DATE_FORMAT(#{startDate},'%H:%i') and DATE_FORMAT(end_date,'%H:%i') &gt;=
+		DATE_FORMAT(#{startDate},'%H:%i') limit 1
+	</select>
+</mapper>

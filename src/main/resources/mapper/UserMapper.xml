@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.karakal.dao.mapper.UserMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.User">
+		<!-- WARNING - @mbggenerated -->
+		<id column="USER_ID" jdbcType="VARCHAR" property="userId" />
+		<result column="USERNAME" jdbcType="VARCHAR" property="username" />
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="RIGHTS" jdbcType="VARCHAR" property="rights" />
+		<result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
+		<result column="LAST_LOGIN" jdbcType="VARCHAR" property="lastLogin" />
+		<result column="IP" jdbcType="VARCHAR" property="ip" />
+		<result column="STATUS" jdbcType="VARCHAR" property="status" />
+		<result column="BZ" jdbcType="VARCHAR" property="bz" />
+		<result column="SKIN" jdbcType="VARCHAR" property="skin" />
+		<result column="EMAIL" jdbcType="VARCHAR" property="email" />
+		<result column="NUMBER" jdbcType="VARCHAR" property="number" />
+		<result column="PHONE" jdbcType="VARCHAR" property="phone" />
+		<result column="OFFICE_NO" jdbcType="VARCHAR" property="officeNo" />
+		<result column="CPHONE" jdbcType="VARCHAR" property="cphone" />
+		<result column="AREA" jdbcType="VARCHAR" property="area" />
+		<result column="FLOOR" jdbcType="VARCHAR" property="floor" />
+		<result column="REGISTER_ID" jdbcType="VARCHAR" property="registerId" />
+		<result column="DEVICE_TYPE" jdbcType="INTEGER" property="deviceType" />
+		<result column="ISPUBLISH" jdbcType="TINYINT" property="ispublish" />
+		<result column="SIGN" jdbcType="VARCHAR" property="sign" />
+		<result column="head_pic" jdbcType="VARCHAR" property="headPic" />
+		<result column="position" jdbcType="VARCHAR" property="position" />
+		<result column="quiet" jdbcType="INTEGER" property="quiet" />
+	</resultMap>
+	<select id="selectDetail" parameterType="com.karakal.controller.system.vo.UserVo" resultType="com.karakal.controller.system.vo.UserVo">
+		select
+		distinct
+		u.USER_ID userId,
+		u.`NAME` name,
+		u.role_id roleId,
+		dsu.department_id departmentId,
+		u.phone phone,
+		u.OFFICE_NO officeNo,
+		u.CPHONE cphone,
+		u.AREA area,
+		u.FLOOR floor,
+		u.ISPUBLISH ispublish,
+		u.sign sign,
+		u.status status,
+		u.password password,
+		d.department_name departmentName,
+		r.ROLE_NAME roleName,
+		s.station_name stationName,
+		u.head_pic headPic,
+		u.quiet quiet
+		from sys_user u
+		inner join bs_department_station_user dsu on dsu.user_id = u.user_id
+		left join bs_station s on s.station_id = dsu.station_id
+		inner join bs_department d on d.department_id = dsu.department_id
+		left join sys_role r on r.role_id = u.role_id
+		where 1=1 
+		<if test="phone!=null">
+			and u.phone = #{phone}
+		</if>
+		<if test="userId!=null">
+			and u.user_id = #{userId}
+		</if>
+
+	</select>
+	<select id="queryUserByDId" parameterType="com.karakal.controller.system.vo.UserVo" resultType="com.karakal.controller.system.vo.UserVo">
+		select
+		distinct
+		u.USER_ID userId,
+		u.`NAME` name,
+		u.phone phone,
+		u.OFFICE_NO officeNo,
+		u.CPHONE cphone,
+		u.ISPUBLISH ispublish,
+		u.head_pic headPic,
+		dsu.department_id departmentId,
+		d.department_name departmentName,
+		s.station_name stationName,
+		u.position
+		from sys_user u
+		inner join bs_department_station_user dsu on dsu.user_id = u.user_id
+		inner join bs_department d on d.department_id = dsu.department_id
+		left join bs_station s on s.station_id = dsu.station_id
+		where 1 =1 
+		<if test="userId !=null and userId != ''">
+			and u.user_id = #{userId}
+		</if>
+		<if test="departmentId !=null and departmentId != ''">
+			and dsu.department_id=#{departmentId} 
+		</if>
+		<if test="keyword !=null and keyword != ''">
+			and (u.phone like concat('%',#{keyword},'%') or u.name like concat('%',#{keyword},'%'))
+		</if>
+	</select>
+	<select id="queryQuiet" resultType="String">
+		select user_id from sys_user where quiet = 1 and 
+		user_id in (${ids})
+	</select>
+</mapper>

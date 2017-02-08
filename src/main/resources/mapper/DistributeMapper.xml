@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.karakal.dao.mapper.DistributeMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.Distribute">
+		<!-- WARNING - @mbggenerated -->
+		<id column="distribute_id" jdbcType="VARCHAR" property="distributeId" />
+		<result column="rid" jdbcType="VARCHAR" property="rid" />
+		<result column="user_id" jdbcType="VARCHAR" property="userId" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="star" jdbcType="INTEGER" property="star" />
+		<result column="IMPORTANT" jdbcType="VARCHAR" property="important" />
+		<result column="servicetype_id" jdbcType="VARCHAR" property="servicetypeId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="date" jdbcType="TIMESTAMP" property="date" />
+	</resultMap>
+	<select id="queryByCondition" resultType="map" parameterType="com.karakal.controller.distribute.vo.DistributeVo">
+		SELECT
+		distinct
+		d.distribute_id AS distributeId,
+		d.rid AS rid,
+		d.user_id AS userId,
+		d.`status` AS `status`,
+		d.content AS content,
+		d.star AS star,
+		d.IMPORTANT AS important,
+		d.servicetype_id AS servicetypeId,
+		d.remark AS remark,
+		d.date AS date,
+		st.servicetype_name AS servicetypeName
+		FROM
+		bs_distribute AS d
+		left JOIN bs_servicetype AS st ON st.servicetype_id = d.servicetype_id
+		inner join bs_distribute_user du on du.distribute_id =
+		d.distribute_id
+		where 1= 1
+		<if test="userId != null and userId != ''">
+			and du.user_id = #{userId}
+		</if>
+		<if test="status != null and status == 2">
+			and d.status in (1,2)
+		</if>
+		<if test="status != null and status == 3">
+			and d.status in (3,4)
+		</if>
+	</select>
+	<select id="queryNoEvaluate" parameterType="com.karakal.controller.distribute.vo.DistributeVo" resultMap="BaseResultMap">
+		SELECT
+		distinct
+		d.distribute_id AS distributeId,
+		d.rid AS rid,
+		d.user_id AS userId,
+		d.`status` AS `status`,
+		d.content AS content,
+		d.star AS star,
+		d.IMPORTANT AS important,
+		d.servicetype_id AS servicetypeId,
+		d.remark AS remark,
+		d.date AS date
+		FROM
+		bs_distribute AS d
+		<if test="type!=null and type==1">
+			inner join bs_meeting m on m.meeting_id = d.rid
+		</if>
+		<if test="type!=null and type==2">
+			inner join bs_order o on o.order_id = d.rid
+		</if>
+		where 1= 1
+		<if test="type!=null and type==1">
+			and m.user_id = #{userId}
+		</if>
+		<if test="type!=null and type==2">
+			and o.user_id = #{userId}
+		</if>
+		and d.status = 3<!-- 状态为3：已完成，但是未评价 -->
+	</select>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.karakal.dao.mapper.DistributeUserMapper">
+  <resultMap id="BaseResultMap" type="com.karakal.entity.DistributeUser">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="distribute_user_id" jdbcType="INTEGER" property="distributeUserId" />
+    <result column="distribute_id" jdbcType="VARCHAR" property="distributeId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.RecordMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.Record">
+		<!-- WARNING - @mbggenerated -->
+		<id column="record_id" property="recordId" jdbcType="INTEGER" />
+		<result column="money" property="money" jdbcType="DOUBLE" />
+		<result column="record_user_id" property="recordUserId" jdbcType="VARCHAR" />
+		<result column="handle_user_id" property="handleUserId" jdbcType="VARCHAR" />
+		<result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="TINYINT" />
+		<result column="message" property="message" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="queryByCondition" parameterType="com.karakal.controller.wallet.vo.AccountVo" resultMap="BaseResultMap">
+		select * from bs_record where 1 =1
+		<if test="type == 1">and type = 2</if><!-- 充值 -->
+		<if test="type == 2">and type in (3,4,5)</if><!-- 消费记录 -->
+		<if test="userId != null">and record_user_id = #{userId}</if>
+	</select>
+	<select id="queryByTimeSlot" parameterType="map" resultMap="BaseResultMap">
+		select * from bs_record where DATE_FORMAT(ctime,'%Y-%m-%d') =
+		DATE_FORMAT(#{currendate},'%Y-%m-%d') and DATE_FORMAT(ctime,'%H:%i') &gt;=
+		DATE_FORMAT(#{startDate},'%H:%i') and DATE_FORMAT(ctime,'%H:%i') &lt;=
+		DATE_FORMAT(#{endDate},'%H:%i') and record_user_id = #{userId} and type=5
+	</select>
+	<select id="queryRecord" parameterType="int" resultType="map">
+		SELECT
+		r.message,
+		u.`NAME` AS `name`,
+		r.money,
+		r.ctime
+		FROM
+		bs_record AS r
+		INNER JOIN sys_user AS u ON u.USER_ID = r.record_user_id
+		where r.record_id = #{recordId}
+	</select>
+</mapper>

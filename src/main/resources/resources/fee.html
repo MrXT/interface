@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>  
+
+  <head>  
+  <meta charset="UTF-8">
+<title>用餐消费</title>
+  <script type="text/javascript" src="ajax-pushlet-client.js"></script>   
+  <script type="text/javascript">    
+         PL.userId='fee';  
+         PL._init();    
+         PL.joinListen('fee');   
+         function onData(event) {   
+        	 var trNodes = document.getElementsByTagName("tr"); 
+        	 if(trNodes.length >=16){
+        		 document.getElementById("tbody").removeChild(trNodes[15]); 
+        	 }
+        	 var html = document.getElementById("tbody").innerHTML;
+        	 var map = JSON.parse(decodeURIComponent(event.get("data")));
+        	 var htmls = '<tr><td align="center">'+map.ctime+'</td><td align="center">'+map.name+'</td><td align="center">用餐消费</td><td align="center">'+map.money+'</td></tr>'
+        	 htmls+=html;
+        	 document.getElementById("tbody").innerHTML=htmls;
+        	 replay();
+         }
+         function replay(){
+        	 var audio = document.getElementById("bgMusic");
+        	//重新播放
+        	 audio.currentTime = 0;
+        	 audio.play();
+         }
+  </script>   
+  </head>  
+  <body>  
+      用餐信息：</br>
+  <table border="1" style="width: 100%">
+  	<thead>
+  		<tr>
+  			<th align="center">消费时间</th>
+  			<th align="center">姓名</th>
+  			<th align="center">消费类型</th>
+  			<th align="center">金额(元)</th>
+  		</tr>
+  	</thead>
+  	<tbody id="tbody">
+  		
+  	</tbody>
+  </table>
+  <audio id="bgMusic" autoplay="autoplay" src="http://tts.baidu.com/text2audio?idx=1&tex=%25E6%25B6%2588%25E8%25B4%25B9%25E6%2588%2590%25E5%258A%259F&cuid=baidu_speech_demo&cod=2&lan=zh&ctp=1&pdt=1&spd=5&per=0&vol=5&pit=5">
+	您的浏览器不支持 audio 标签。
+	</audio>
+  </body>  
+</html>

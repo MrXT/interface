@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.WealMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.Weal">
+		<!-- WARNING - @mbggenerated -->
+		<id column="weal_id" property="wealId" jdbcType="VARCHAR" />
+		<result column="infor" property="infor" jdbcType="VARCHAR" />
+		<result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="queryByCondition" parameterType="com.karakal.controller.weal.vo.WealVO" resultType="map">
+		SELECT
+		w.weal_id AS wealId,
+		w.infor AS infor,
+		w.ctime,
+		w.title,
+		w.`status`,
+		w.imgurl
+		FROM
+		bs_weal AS w
+		where w.status = 1 
+	</select>
+	<select id="queryIsNew" parameterType="com.karakal.controller.weal.vo.WealVO" resultType="map">
+		SELECT
+		wu.weal_id wealId,
+		wu.user_id userId,
+		wu.type
+		FROM
+		bs_weal_user AS wu
+		where wu.weal_id in (${wealId}) and wu.user_id = #{userId}
+	</select>
+	<select id="queryWeals" parameterType="com.karakal.controller.weal.vo.WealVO" resultType="map">
+		SELECT
+		distinct
+		w.weal_id AS wealId,
+		w.infor AS infor,
+		w.ctime,
+		w.title,
+		w.`status`,
+		w.imgurl
+		FROM
+		bs_weal AS w
+		left JOIN bs_weal_user AS wu ON wu.weal_id = w.weal_id
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="userId != null and userId !=''">
+				wu.user_id = #{userId} and wu.type=2 and w.status = 1 <!-- 2：报名 -->
+			</if>
+		</trim>
+	</select>
+</mapper>

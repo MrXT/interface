@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.VersionMapper" >
+  <resultMap id="BaseResultMap" type="com.karakal.entity.Version" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="version_id" property="versionId" jdbcType="INTEGER" />
+    <result column="version_name" property="versionName" jdbcType="VARCHAR" />
+    <result column="download_url" property="downloadUrl" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+    <result column="version_code" property="versionCode" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="queryNewVersion" resultMap="BaseResultMap">
+  	select * from bs_version where type = #{type} order by ctime desc limit 1;
+  </select>
+</mapper>

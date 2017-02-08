@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.MaterialMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.Material">
+		<!-- WARNING - @mbggenerated -->
+		<id column="material_id" property="materialId" jdbcType="VARCHAR" />
+		<result column="materialtype_id" property="materialtypeId" jdbcType="VARCHAR" />
+		<result column="materialname_id" property="materialnameId" jdbcType="VARCHAR" />
+		<result column="brand" property="brand" jdbcType="VARCHAR" />
+		<result column="model" property="model" jdbcType="VARCHAR" />
+		<result column="param" property="param" jdbcType="VARCHAR" />
+		<result column="serial_number" property="serialNumber" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="deposit_office" property="depositOffice" jdbcType="VARCHAR" />
+		<result column="deposit_floor" property="depositFloor" jdbcType="VARCHAR" />
+		<result column="deposit_house" property="depositHouse" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="count" property="count" jdbcType="INTEGER" />
+		<result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="is_need_serial" property="isNeedSerial" jdbcType="INTEGER" />
+	</resultMap>
+	<select id="queryByCondition" parameterType="com.karakal.controller.material.vo.MaterialVo" resultType="map">
+		SELECT
+		m.material_id AS materialId,
+		m.materialtype_id AS materialtypeId,
+		m.materialname_id AS materialnameId,
+		m.brand AS brand,
+		m.model AS model,
+		m.param
+		AS param,
+		m.status,
+		m.serial_number AS serialNumber,
+		m.price AS price,
+		m.user_id AS userId,
+		mt.MATERIAL_TYPE_NAME AS materialtypeName,
+		mn.MATERIAL_NAME AS materialName,
+		m.is_need_serial AS isNeedSerial
+		FROM
+		bs_material AS m
+		INNER JOIN bs_materialtype AS mt ON mt.MATERIALTYPE_ID = m.materialtype_id
+		INNER JOIN
+		bs_materialname AS mn ON mn.MATERIALNAME_ID = m.materialname_id
+		where 1= 1
+		<if test="userId != null and userId != ''">
+			and m.user_id = #{userId} and (m.status = 4 or m.status = 7 or m.status = 6)
+		</if>
+		<if test="materialtypeId != null and materialtypeId != ''">
+			and m.materialtype_id = #{materialtypeId}
+		</if>
+		<if test="materialnameId != null and materialnameId != ''">
+			and m.materialname_id = #{materialnameId}
+		</if>
+		<if test="userId == null or userId == ''">
+			and (m.status = 0 or m.status = 1)<!-- 新旧设备一起搜索  --> 
+		</if>
+		<if test="status != null and (userId == null or userId == '')">
+			and  m.status = #{status}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			and (mt.MATERIAL_TYPE_NAME like concat('%',#{keyword},'%') or mn.MATERIAL_NAME like concat('%',#{keyword},'%'))
+		</if>
+	</select>
+	<update id="updateBatchUser" parameterType="map">
+		update bs_material set user_id = #{userId},status = #{status} where material_id in (${ids})
+	</update>
+</mapper>

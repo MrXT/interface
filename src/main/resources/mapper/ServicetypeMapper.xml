@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.ServicetypeMapper" >
+  <resultMap id="BaseResultMap" type="com.karakal.entity.Servicetype" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="servicetype_id" property="servicetypeId" jdbcType="VARCHAR" />
+    <result column="servicetype_name" property="servicetypeName" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

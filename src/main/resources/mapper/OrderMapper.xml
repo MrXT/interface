@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.karakal.dao.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.karakal.entity.Order">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="infor" jdbcType="VARCHAR" property="infor" />
+    <result column="material_names" jdbcType="VARCHAR" property="materialNames" />
+    <result column="ctime" jdbcType="TIMESTAMP" property="ctime" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="servicetype_id" jdbcType="VARCHAR" property="servicetypeId" />
+    <result column="handler_info" jdbcType="VARCHAR" property="handlerInfo" />
+    <result column="materialname_ids" jdbcType="VARCHAR" property="materialnameIds" />
+  </resultMap>
+  <select id="queryByCondition" parameterType="com.karakal.controller.order.vo.OrderVo" resultType="map">
+		SELECT
+		distinct
+		o.order_id AS orderId,
+		o.material_names As materialNames,
+		o.materialname_ids AS materialnameIds,
+		o.user_id
+		AS userId,
+		o.ctime AS ctime,
+		o.infor AS infor,
+		o.handler_info AS handlerInfo,
+		u.`NAME` AS `name`,
+		bd.department_name departmentName,
+		u.cphone cphone,
+		ifnull(d.`status`,0) AS `status` ,
+		d.user_id responsibleUserId,
+		ud.NAME responsibleUserName,
+		ud.cphone responsibleUserCphone,
+		ud.phone responsibleUserPhone,
+		d.star,
+		d.content,
+		o.servicetype_id as servicetypeId,
+		st.servicetype_name as servicetypeName
+		FROM
+		bs_order AS o
+		INNER JOIN sys_user AS u ON
+		u.USER_ID = o.user_id
+		inner join bs_department_station_user dsu on dsu.user_id = o.user_id
+		inner join bs_department bd on bd.department_id = dsu.department_id
+		inner join bs_servicetype st on st.servicetype_id = o.servicetype_id
+		LEFT JOIN bs_distribute AS d ON d.rid = o.order_id
+		LEFT JOIN sys_user AS ud ON
+		ud.USER_ID = d.user_id
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="servicetypeId != null and servicetypeId !=''">
+				o.servicetype_id = #{servicetypeId}
+			</if>
+			<if test="orderId != null">
+				and o.order_id = #{orderId}
+			</if>
+			<if test="userId != null">
+				and o.user_id = #{userId}
+			</if>
+			<if test="date != null and date != ''">
+				and date_format(o.ctime,'%Y-%m-%d') = #{date}
+			</if>
+		</trim>
+	</select>
+</mapper>

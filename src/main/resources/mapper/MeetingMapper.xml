@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.MeetingMapper">
+	<resultMap id="BaseResultMap" type="com.karakal.entity.Meeting">
+		<!-- WARNING - @mbggenerated -->
+		<id column="meeting_id" property="meetingId" jdbcType="VARCHAR" />
+		<result column="servicetype_id" property="servicetypeId" jdbcType="VARCHAR" />
+		<result column="meetingroom_id" property="meetingroomId" jdbcType="VARCHAR" />
+		<result column="meeting_name" property="meetingName" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+		<result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+		<result column="infor" property="infor" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="queryByCondition" parameterType="com.karakal.controller.meeting.vo.MeetingVO" resultType="map">
+		SELECT
+		distinct
+		m.meeting_id AS meetingId,
+		m.meeting_name As meetingName,
+		m.servicetype_id AS servicetypeId,
+		m.meetingroom_id AS meetingroomId,
+		m.user_id
+		AS userId,
+		m.start_date AS startDate,
+		m.end_date AS endDate,
+		m.ctime AS ctime,
+		m.infor AS infor,
+		mr.meetingroom_name AS meetingroomName,
+		mr.area area,
+		u.`NAME` AS
+		`name`,
+		bd.department_name departmentName,
+		u.cphone cphone,
+		u.area userArea,
+		u.floor floor,
+		u.office_no officeNo,
+		ifnull(d.`status`,0) AS `status` ,
+		d.user_id responsibleUserId,
+		ud.NAME responsibleUserName,
+		ud.cphone responsibleUserCphone,
+		ud.phone responsibleUserPhone,
+		d.star,
+		d.content
+		FROM
+		bs_meeting AS m
+		INNER JOIN bs_meetingroom AS mr ON mr.meetingroom_id = m.meetingroom_id
+		INNER JOIN sys_user AS u ON
+		u.USER_ID = m.user_id
+		inner join bs_department_station_user dsu on dsu.user_id = m.user_id
+		inner join bs_department bd on bd.department_id = dsu.department_id
+		LEFT JOIN bs_distribute AS d ON d.rid = m.meeting_id
+		LEFT JOIN sys_user AS ud ON
+		ud.USER_ID = d.user_id
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="userId != null">
+				m.user_id = #{userId}
+			</if>
+			<if test="meetingId != null">
+				and m.meeting_id = #{meetingId}
+			</if>
+			<if test="meetingName != null and meetingName != ''">
+				and mr.MEETINGROOM_NAME like concat('%',#{meetingName},'%')
+			</if>
+			<if test="meetingroomId != null and meetingroomId != ''">
+				and mr.meetingroom_id = #{meetingroomId}
+			</if>
+			<if test="date != null and date != ''">
+				and date_format(m.start_date,'%Y-%m-%d') &lt;=#{date} and date_format(m.end_date,'%Y-%m-%d') &gt;= #{date}
+			</if>
+			<if test="startDate != null and endDate != null">
+				and (m.start_date &lt;= #{startDate} and m.end_date  &gt;= #{startDate} 
+				or  m.start_date &lt;= #{endDate} and m.end_date  &gt;= #{endDate}
+				or m.start_date &gt;= #{startDate} and m.end_date  &lt;= #{endDate}
+				)
+			</if>
+		</trim>
+	</select>
+	<select id="queryUsersByIds" resultType="map">
+		SELECT
+		mu.meeting_id AS meetingId,
+		mu.user_id AS userId,
+		mu.type AS type,
+		u.`NAME` AS `name`,
+		bd.department_name departmentName
+		FROM
+		bs_meeting_user AS mu
+		INNER JOIN sys_user AS u ON u.USER_ID = mu.user_id
+		inner join bs_department_station_user dsu on dsu.user_id = u.user_id
+		inner join bs_department bd on bd.department_id = dsu.department_id
+		where mu.meeting_id in (${ids})
+	</select>
+	<select id="queryHandleUsersByIds" resultType="map">
+		SELECT
+		d.rid AS meetingId,
+		u.user_id AS userId,
+		u.`NAME` AS `name`
+		FROM
+		sys_user AS u
+		INNER join bs_distribute_user du on du.user_id = u.user_id
+		INNER JOIN bs_distribute as d on d.distribute_id = du.distribute_id
+		where d.rid in (${ids})
+	</select>
+	<select id="queryRecord" resultType="map">
+		SELECT
+		distinct
+		m.meeting_id AS meetingId,
+		m.meeting_name As meetingName,
+		m.start_date AS startDate,
+		m.end_date AS endDate,
+		mr.meetingroom_name AS meetingroomName,
+		mr.area area,
+		m.infor AS infor
+		FROM
+		bs_meeting AS m
+		INNER JOIN bs_meetingroom AS mr ON mr.meetingroom_id = m.meetingroom_id
+		inner join bs_meeting_user AS mu on mu.meeting_id = m.meeting_id
+		where mu.user_id = #{userId} and (mu.type=1 or mu.type = 2)
+		<if test="type != null and type == 1"><!-- 查询未召开的会议 -->
+			and m.start_date > now()
+		</if>
+	</select>
+</mapper>

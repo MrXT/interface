@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.karakal.dao.mapper.DepartmentStationUserMapper" >
+  <resultMap id="BaseResultMap" type="com.karakal.entity.DepartmentStationUser" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="department_station_user_id" property="departmentStationUserId" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="station_id" property="stationId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
